@@ -16,6 +16,14 @@ public class Tarea {
         this.nivelPrioridad = nivelPrioridad;
     }
 
+    public Tarea(Tarea tarea) {
+        this.id = tarea.getId();
+        this.nombre = tarea.getNombre();
+        this.tiempoEjecucion = tarea.getTiempoEjecucion();
+        this.esCritica = tarea.getEsCritica();
+        this.nivelPrioridad = tarea.getNivelPrioridad();
+    }
+
     public String getId() {
         return id;
     }
@@ -47,6 +55,10 @@ public class Tarea {
         this.nivelPrioridad = nivelPrioridad;
     }
 
+    @Override
+    public String toString() {
+        return "Tarea [id=" + id + ", nombre=" + nombre + ", tiempoEjecucion=" + tiempoEjecucion + ", esCritica="
+                + esCritica + ", nivelPrioridad=" + nivelPrioridad + "]";
+    }
     
-
 }

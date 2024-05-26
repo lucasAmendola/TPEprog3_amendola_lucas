@@ -17,7 +17,7 @@ public class CSVReader {
 
 	}
 
-	public void readTasks(String taskPath, HashMap<String, Tarea> tareas) {
+	public void readTasks(String taskPath, ArrayList<Tarea> tareas, HashMap<String, Tarea> hashTareas) {
 		// Obtengo una lista con las lineas del archivo
 		// lines.get(0) tiene la primer linea del archivo
 		// lines.get(1) tiene la segunda linea del archivo... y así
@@ -33,7 +33,8 @@ public class CSVReader {
 
 			// Aca instanciar lo que necesiten en base a los datos leidos
 			Tarea newTarea = new Tarea(id, nombre, tiempo, critica, prioridad);
-			tareas.put(id, newTarea);
+			tareas.add(newTarea);
+			hashTareas.put(id, newTarea);
 		}
 		
 	}

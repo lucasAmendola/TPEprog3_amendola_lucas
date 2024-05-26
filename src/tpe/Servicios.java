@@ -24,24 +24,62 @@ public class Servicios {
 		this.hashAux = new HashMap<>();
 		CSVReader reader = new CSVReader();
 		reader.readProcessors(pathProcesadores);
-		reader.readTasks(pathTareas, hashAux);
+		reader.readTasks(pathTareas, arrayTareas, hashAux);
 	}
 	
 	/*
-     * Expresar la complejidad temporal del servicio 1.
+     * Complejidad Temporal: O(1).
      */
 	public Tarea servicio1(String ID) {
 		return this.hashAux.get(ID);
 	}
     
     /*
-     * Expresar la complejidad temporal del servicio 2.
+     * Complejidad Temporal: O(n) en el peor de los casos, ya que podría iterar sobre todas las tareas.
      */
-	/*public List<Tarea> servicio2(boolean esCritica) {} */
+
+	/*Permitir que el usuario decida si quiere ver todas las tareas críticas o no críticas y generar
+	el listado apropiado resultante. */
+
+	public List<Tarea> servicio2(boolean esCritica) {
+		List<Tarea> tareasCumple = new ArrayList<>();
+		servicio2(tareasCumple, esCritica);
+		return tareasCumple;
+	} 
+
+	private void servicio2(List<Tarea> tareasCumple, Boolean esCritica){
+		for(int i = 0; i<this.arrayTareas.size(); i++){
+			if(this.arrayTareas.get(i).getEsCritica() ){
+				Tarea tCopia = new Tarea(this.arrayTareas.get(i));
+				tareasCumple.add(tCopia);
+			}
+		}
+	}
 
     /*
-     * Expresar la complejidad temporal del servicio 3.
+     * Complejidad Temporal: O(n) en el peor de los casos, ya que podría iterar sobre todas las tareas.
      */
-	/*public List<Tarea> servicio3(int prioridadInferior, int prioridadSuperior) {} */
 
+	 /*Obtener todas las tareas entre 2 niveles de prioridad indicados */
+	public List<Tarea> servicio3(int prioridadInferior, int prioridadSuperior) {
+		List<Tarea> tareasCumple = new ArrayList<>();
+		servicio3(tareasCumple, prioridadInferior, prioridadSuperior);
+		return tareasCumple;
+	}
+
+	private void servicio3(List<Tarea> tareasCumple, int prioridadInferior, int prioridadSuperior) {
+		for(Tarea tarea: hashAux.values()){
+			Integer nivelPrioridad = tarea.getNivelPrioridad();
+			if((nivelPrioridad >= prioridadInferior) && (nivelPrioridad <= prioridadSuperior)){
+				tareasCumple.add(tarea);
+			}
+		}
+	} 
+
+	public void procesarDatosServicio(List<Tarea> tareasResultados){
+		System.out.println("\nTareas:");
+		for(Tarea t : tareasResultados){
+			System.out.println(t);
+		}
+	}
 }
