@@ -81,10 +81,11 @@ public class Backtracking {
 
                         int sumaParcial = this.hashTiempo.get(procesador.getId());
                         int sumaNueva = sumaParcial + tarea.getTiempoEjecucion();
-                        this.hashTiempo.put(procesador.getId(), sumaNueva);
 
                         // Poda para procesadores no refrigerados
-                        if ((!procesador.getEstaRefrigerado() && this.hashTiempo.get(procesador.getId()) < tiempoMaximo) || procesador.getEstaRefrigerado()) {
+                        if ((!procesador.getEstaRefrigerado() && sumaNueva < tiempoMaximo) || procesador.getEstaRefrigerado()) {
+
+                            this.hashTiempo.put(procesador.getId(), sumaNueva);
                             // ASIGNO TAREA AL PROCESADOR
                             if (!solucionActual.containsKey(procesador.getId())) {
                                 // Si no existe el procesador en el hash
@@ -108,9 +109,7 @@ public class Backtracking {
                             
                             // Saco tarea de procesador
                             solucionActual.get(procesador.getId()).remove(tarea);
-                        } else {
-                            this.hashTiempo.put(procesador.getId(), sumaParcial);
-                        }
+                        } 
                     } 
                     j++;
                 }
