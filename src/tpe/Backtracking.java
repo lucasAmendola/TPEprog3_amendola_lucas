@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.management.relation.RoleList;
+
 public class Backtracking {
 
     private List<Tarea> tareas;
@@ -31,6 +33,12 @@ public class Backtracking {
         int metrica = 0;
         tareasAsignadas = 0;
         HashMap<String, ArrayList<Tarea>> solucionActual = new HashMap<String, ArrayList<Tarea>>();
+
+        for (Procesador p: procesadores) {
+            ArrayList<Tarea> arrayListTareas = new ArrayList<>();
+            solucionActual.put(p.getId(), arrayListTareas);
+        }
+
         //mandar a recursivo
         this.encontrarSolucion(solucionActual,metrica,tiempoMaximo,0);
 
@@ -85,16 +93,12 @@ public class Backtracking {
                         // Poda para procesadores no refrigerados
                         if ((!procesador.getEstaRefrigerado() && sumaNueva < tiempoMaximo) || procesador.getEstaRefrigerado()) {
 
-                            this.hashTiempo.put(procesador.getId(), sumaNueva);
-                            // ASIGNO TAREA AL PROCESADOR
-                            if (!solucionActual.containsKey(procesador.getId())) {
-                                // Si no existe el procesador en el hash
-                                ArrayList<Tarea> newListTareas = new ArrayList<>();
-                                solucionActual.put(procesador.getId(), newListTareas);
-                                solucionActual.get(procesador.getId()).add(tarea);
-                            } else {
+                                this.hashTiempo.put(procesador.getId(), sumaNueva);
+
+                                // ASIGNO TAREA AL PROCESADOR
                                 solucionActual.get(procesador.getId()).add(tarea);
                             }
+                            
                             // Llamo a recursividad
                             tareasAsignadas++;
                             this.encontrarSolucion(solucionActual, metrica, tiempoMaximo, indiceTareas + 1);
