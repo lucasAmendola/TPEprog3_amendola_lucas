@@ -73,7 +73,7 @@ public class Backtracking {
                     Procesador procesador = this.procesadores.get(j);
 
                     // Poda tareas críticas
-                    if ((tarea.getEsCritica() && this.hashCriticas.get(procesador.getId()).size() <= 2) || !tarea.getEsCritica()) {
+                    if ((tarea.getEsCritica() && this.hashCriticas.get(procesador.getId()).size() < 2) || !tarea.getEsCritica()) {
                         // Si es crítica la agrego al hash auxiliar de tareas críticas
                         if (tarea.getEsCritica()) {
                             this.hashCriticas.get(procesador.getId()).add(tarea);
