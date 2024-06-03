@@ -38,7 +38,22 @@ public class Backtracking {
         this.imprimirSolucion(metrica);
     }
 
-    //FUNCION PRIVADA
+    /*
+    * << la estrategia de backtracking utilizada en este código se basa en una búsqueda 
+        exhaustiva de todas las posibles asignaciones de tareas a procesadores, 
+        evaluando cada posible solución y eligiendo la mejor. En cada recursión
+        son aplicadas 2 podas, la primera de ellas se encarga de comprobar que el procesador
+        al que le estamos asignando tareas no sobrepase el limite de 2 tareas criticas asignadas,
+        esto se comprueba a través del HashMap auxiliar "hashCriticas", en donde se van almacenando
+        las tareas criticas que se le van asignando a cada procesador. Una vez superada esta poda, se
+        encuentra la segunda, que consta de comprobar que aquellos procesadores que no posean refiregeración
+        no sobrepasen un limite determinado de tiempo de ejecución, el cual es asignado por el usuario
+        y que tambien se comprueba a través de la utilización de un HashMap auxiliar, en donde se va
+        alamecenando el tiempo de ejecucion de cada procesador a medida de que se le asignan tareas. Una
+        vez superadas las 2 podas, se llega a la instancia de asignacion final de la tarea al procesador 
+        actual y se llama recursivamente a la función para que siga con las demas tareas.>>
+    */
+
     private void encontrarSolucion(HashMap<String, ArrayList<Tarea>> solucionActual, int metrica,int tiempoMaximo, int indiceTareas) {
         metrica += 1;
         if (this.tareas.size() == tareasAsignadas) { // Asigné todas las tareas a algún procesador
@@ -49,6 +64,7 @@ public class Backtracking {
             }
         } else {
             if (indiceTareas < this.tareas.size()) {
+                
                 Tarea tarea = this.tareas.get(indiceTareas);
                 int j = 0;
                 // Recorro procesadores
