@@ -69,17 +69,19 @@ public class Backtracking {
                 int j = 0;
                 // Recorro procesadores
                 while (j < this.procesadores.size()) {
+                    
                     Procesador procesador = this.procesadores.get(j);
 
-                    // Si es crítica la agrego al hash auxiliar de tareas críticas
-                    if (tarea.getEsCritica()) {
-                        this.hashCriticas.get(procesador.getId()).add(tarea);
-                    }
-
                     // Poda tareas críticas
-                    if (this.hashCriticas.get(procesador.getId()).size() <= 2) {
+                    if ((tarea.getEsCritica() && this.hashCriticas.get(procesador.getId()).size() <= 2) || !tarea.getEsCritica()) {
+                        // Si es crítica la agrego al hash auxiliar de tareas críticas
+                        if (tarea.getEsCritica()) {
+                            this.hashCriticas.get(procesador.getId()).add(tarea);
+                        }
+
                         int sumaParcial = this.hashTiempo.get(procesador.getId());
-                        this.hashTiempo.put(procesador.getId(), sumaParcial + tarea.getTiempoEjecucion());
+                        int sumaNueva = sumaParcial + tarea.getTiempoEjecucion();
+                        this.hashTiempo.put(procesador.getId(), sumaNueva);
 
                         // Poda para procesadores no refrigerados
                         if ((!procesador.getEstaRefrigerado() && this.hashTiempo.get(procesador.getId()) < tiempoMaximo) || procesador.getEstaRefrigerado()) {
@@ -98,15 +100,18 @@ public class Backtracking {
                             // Termino recursividad
                             tareasAsignadas--;
                             this.hashTiempo.put(procesador.getId(), sumaParcial);
-                            this.hashCriticas.get(procesador.getId()).remove(tarea);
+
+                            //si es critica, la saco del hash de criticas
+                            if(tarea.getEsCritica()){
+                                this.hashCriticas.get(procesador.getId()).remove(tarea);
+                            }
+                            
                             // Saco tarea de procesador
                             solucionActual.get(procesador.getId()).remove(tarea);
                         } else {
                             this.hashTiempo.put(procesador.getId(), sumaParcial);
                         }
-                    } else {
-                        this.hashCriticas.get(procesador.getId()).remove(tarea);
-                    }
+                    } 
                     j++;
                 }
             }

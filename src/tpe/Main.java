@@ -1,9 +1,5 @@
 package tpe;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-
-import tpe.utils.CSVReader;
 
 // Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
 // then press Enter. You can now see whitespace characters in your code.
