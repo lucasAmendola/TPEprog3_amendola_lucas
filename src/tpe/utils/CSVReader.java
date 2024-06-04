@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import tpe.Procesador;
 import tpe.Tarea;
 
 
@@ -17,7 +18,7 @@ public class CSVReader {
 
 	}
 
-	public void readTasks(String taskPath, ArrayList<Tarea> tareas, HashMap<String, Tarea> hashTareas) {
+	public void readTasks(String taskPath, ArrayList<Tarea> tareasCriticas, ArrayList<Tarea> tareasNoCriticas, HashMap<String, Tarea> hashTareas) {
 		// Obtengo una lista con las lineas del archivo
 		// lines.get(0) tiene la primer linea del archivo
 		// lines.get(1) tiene la segunda linea del archivo... y así
@@ -33,7 +34,13 @@ public class CSVReader {
 
 			// Aca instanciar lo que necesiten en base a los datos leidos
 			Tarea newTarea = new Tarea(id, nombre, tiempo, critica, prioridad);
-			tareas.add(newTarea);
+			if(critica){
+				tareasCriticas.add(newTarea);
+			}
+			else{
+				tareasNoCriticas.add(newTarea);
+			}
+			
 			hashTareas.put(id, newTarea);
 		}
 		
@@ -51,7 +58,10 @@ public void readProcessors(String processorPath) {
 			String codigo = line[1].trim();
 			Boolean refrigerado = Boolean.parseBoolean(line[2].trim());
 			Integer anio = Integer.parseInt(line[3].trim());
+
 			// Aca instanciar lo que necesiten en base a los datos leidos
+			Procesador newProcesador = new Procesador(id, codigo, refrigerado, anio);
+			
 		}
 		
 	}

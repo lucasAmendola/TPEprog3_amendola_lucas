@@ -11,7 +11,8 @@ import tpe.utils.CSVReader;
  */
 public class Servicios {
 	CSVReader reader;
-	ArrayList<Tarea> arrayTareas;
+	ArrayList<Tarea> tareasCriticas;
+	ArrayList<Tarea> tareasNoCriticas;
 	HashMap <String, Tarea> hashAux;
 	ArrayList<HashMap<Procesador, Tarea>> procesadorTarea;
 
@@ -19,12 +20,13 @@ public class Servicios {
      * Expresar la complejidad temporal del constructor.
      */
 	public Servicios(String pathProcesadores, String pathTareas){
-		this.arrayTareas = new ArrayList<>();
+		this.tareasCriticas = new ArrayList<>();
+		this.tareasNoCriticas = new ArrayList<>();
 		this.procesadorTarea = new ArrayList<>();
 		this.hashAux = new HashMap<>();
 		CSVReader reader = new CSVReader();
 		reader.readProcessors(pathProcesadores);
-		reader.readTasks(pathTareas, arrayTareas, hashAux);
+		reader.readTasks(pathTareas, tareasCriticas, tareasNoCriticas, hashAux);
 	}
 	
 	/*
@@ -48,11 +50,11 @@ public class Servicios {
 	} 
 
 	private void servicio2(List<Tarea> tareasCumple, Boolean esCritica){
-		for(int i = 0; i<this.arrayTareas.size(); i++){
-			if(this.arrayTareas.get(i).getEsCritica() ){
-				Tarea tCopia = new Tarea(this.arrayTareas.get(i));
-				tareasCumple.add(tCopia);
-			}
+		if (esCritica) {
+			tareasCumple.addAll(tareasCriticas);
+		}
+		else{
+			tareasCumple.addAll(tareasNoCriticas);
 		}
 	}
 
