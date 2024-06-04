@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.management.relation.RoleList;
-
 public class Backtracking {
 
     private List<Tarea> tareas;
@@ -93,33 +91,35 @@ public class Backtracking {
                         // Poda para procesadores no refrigerados
                         if ((!procesador.getEstaRefrigerado() && sumaNueva < tiempoMaximo) || procesador.getEstaRefrigerado()) {
 
+                                // actualizo tiempo del procesador en el hash de tiempos
                                 this.hashTiempo.put(procesador.getId(), sumaNueva);
 
                                 // ASIGNO TAREA AL PROCESADOR
                                 solucionActual.get(procesador.getId()).add(tarea);
-                            }
                             
-                            // Llamo a recursividad
-                            tareasAsignadas++;
-                            this.encontrarSolucion(solucionActual, metrica, tiempoMaximo, indiceTareas + 1);
-                            // Termino recursividad
-                            tareasAsignadas--;
-                            this.hashTiempo.put(procesador.getId(), sumaParcial);
+                                // Llamo a recursividad
+                                tareasAsignadas++;
+                                this.encontrarSolucion(solucionActual, metrica, tiempoMaximo, indiceTareas + 1);
 
-                            //si es critica, la saco del hash de criticas
-                            if(tarea.getEsCritica()){
-                                this.hashCriticas.get(procesador.getId()).remove(tarea);
-                            }
-                            
-                            // Saco tarea de procesador
-                            solucionActual.get(procesador.getId()).remove(tarea);
-                        } 
+                                // Termino recursividad y vuelvo al estado anterior
+                                tareasAsignadas--;
+                                this.hashTiempo.put(procesador.getId(), sumaParcial);
+
+                                //si es critica, la saco del hash de criticas
+                                if(tarea.getEsCritica()){
+                                    this.hashCriticas.get(procesador.getId()).remove(tarea);
+                                }
+                                
+                                // Saco tarea de procesador
+                                solucionActual.get(procesador.getId()).remove(tarea);
+                        }   
                     } 
                     j++;
-                }
+                } 
             }
         }
     }
+
 
     private void quedarseConLaMejorSolucion(HashMap<String, ArrayList<Tarea>> solucionActual) {
 
