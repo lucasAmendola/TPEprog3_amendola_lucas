@@ -80,16 +80,17 @@ public class Backtracking {
 
                     // Poda tareas críticas
                     if ((tarea.getEsCritica() && this.hashCriticas.get(procesador.getId()).size() < 2) || !tarea.getEsCritica()) {
-                        // Si es crítica la agrego al hash auxiliar de tareas críticas
-                        if (tarea.getEsCritica()) {
-                            this.hashCriticas.get(procesador.getId()).add(tarea);
-                        }
 
                         int sumaParcial = this.hashTiempo.get(procesador.getId());
                         int sumaNueva = sumaParcial + tarea.getTiempoEjecucion();
 
                         // Poda para procesadores no refrigerados
                         if ((!procesador.getEstaRefrigerado() && sumaNueva < tiempoMaximo) || procesador.getEstaRefrigerado()) {
+
+                                // Si es crítica la agrego al hash auxiliar de tareas críticas
+                                if (tarea.getEsCritica()) {
+                                    this.hashCriticas.get(procesador.getId()).add(tarea);
+                                }
 
                                 // actualizo tiempo del procesador en el hash de tiempos
                                 this.hashTiempo.put(procesador.getId(), sumaNueva);
