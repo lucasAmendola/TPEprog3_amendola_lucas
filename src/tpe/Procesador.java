@@ -37,4 +37,10 @@ public class Procesador {
     public void setAnioFuncionamiento(int anioFuncionamiento) {
         this.anioFuncionamiento = anioFuncionamiento;
     }
+
+    @Override
+    public String toString() {
+        return "Procesador [id=" + id + ", codigo=" + codigo + ", estaRefrigerado=" + estaRefrigerado
+                + ", anioFuncionamiento=" + anioFuncionamiento + "]";
+    }
 }

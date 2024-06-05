@@ -2,23 +2,32 @@ package tpe;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Iterator;
+
+import tpe.utils.CSVReader;
 
 public class Backtracking {
 
-    private List<Tarea> tareas;
-    private List<Procesador> procesadores;
+    private ArrayList<Tarea> tareas;
+    private ArrayList<Procesador> procesadores;
     private HashMap<String, ArrayList<Tarea>> solucionFinal;
     private HashMap<String, Integer> hashTiempo;
     private HashMap<String, ArrayList<Tarea>> hashCriticas;
     private int tareasAsignadas;
+    private int metrica;
 
-    public Backtracking(ArrayList<Tarea> tareas, ArrayList<Procesador> procesadores) {
-        this.tareas = tareas;
-        this.procesadores = procesadores;
+    public Backtracking(String pathTareas, String pathProcesadores) {
+        this.procesadores = new ArrayList<>();
+        this.tareas = new ArrayList<>();
         this.solucionFinal = new HashMap<String, ArrayList<Tarea>>();
         this.hashTiempo = new HashMap<String, Integer>();
         this.hashCriticas = new HashMap<String, ArrayList<Tarea>>();
+        this.metrica = 0;
+        this.tareasAsignadas = 0;
+
+        CSVReader reader = new CSVReader();
+		reader.readProcessors(pathProcesadores, procesadores);
+        reader.readTasks(pathTareas, tareas, new ArrayList<>(), new ArrayList<>(), new HashMap<>());
 
         for (Procesador procesador : procesadores) {
             hashTiempo.put(procesador.getId(), 0);
@@ -26,10 +35,23 @@ public class Backtracking {
         }
     }
 
+    public void imprimirPrueba(HashMap<String, ArrayList<Tarea>> solucionAct) {
+        for (String p : solucionAct.keySet()) {
+                System.out.println("Procesador: ");
+                System.out.println(p);
+                ArrayList <Tarea> arrayListTareas = solucionAct.get(p);
+                Iterator <Tarea> itTareas = arrayListTareas.iterator();
+                while (itTareas.hasNext()) {
+                        Tarea t = itTareas.next();
+                        System.out.println("tareas del procesador: " + p);
+                        System.out.println("Tarea : " + t.getId());
+                }
+        }
+    }
+
     //FUNCION PUBLICA
     public void encontrarSolucion(int tiempoMaximo) {
-        int metrica = 0;
-        tareasAsignadas = 0;
+
         HashMap<String, ArrayList<Tarea>> solucionActual = new HashMap<String, ArrayList<Tarea>>();
 
         for (Procesador p: procesadores) {
@@ -38,10 +60,9 @@ public class Backtracking {
         }
 
         //mandar a recursivo
-        this.encontrarSolucion(solucionActual,metrica,tiempoMaximo,0);
-
-        //impre solucion
-        this.imprimirSolucion(metrica);
+        this.encontrarSolucion(solucionActual, tiempoMaximo, 0);
+        this.imprimirPrueba(solucionFinal);
+        this.imprimirSolucion(this.metrica);
     }
 
     /*
@@ -60,14 +81,18 @@ public class Backtracking {
         actual y se llama recursivamente a la función para que siga con las demas tareas.>>
     */
 
-    private void encontrarSolucion(HashMap<String, ArrayList<Tarea>> solucionActual, int metrica,int tiempoMaximo, int indiceTareas) {
-        metrica += 1;
-        if (this.tareas.size() == tareasAsignadas) { // Asigné todas las tareas a algún procesador
+    private void encontrarSolucion(HashMap<String, ArrayList<Tarea>> solucionActual, int tiempoMaximo, int indiceTareas) {
+        metrica++;
+       
+        if (this.tareas.size() == tareasAsignadas) {
+
+             // Asigné todas las tareas a algún procesador
             if (this.solucionFinal.isEmpty()) {
                 this.solucionFinal.putAll(solucionActual);
             } else {
                 this.quedarseConLaMejorSolucion(solucionActual);
             }
+            
         } else {
             if (indiceTareas < this.tareas.size()) {
                 
@@ -97,10 +122,10 @@ public class Backtracking {
 
                                 // ASIGNO TAREA AL PROCESADOR
                                 solucionActual.get(procesador.getId()).add(tarea);
-                            
+                                
                                 // Llamo a recursividad
                                 tareasAsignadas++;
-                                this.encontrarSolucion(solucionActual, metrica, tiempoMaximo, indiceTareas + 1);
+                                this.encontrarSolucion(solucionActual, tiempoMaximo, tareasAsignadas);
 
                                 // Termino recursividad y vuelvo al estado anterior
                                 tareasAsignadas--;
@@ -128,9 +153,9 @@ public class Backtracking {
         int tiempoMaximoSolucionFinal = obtenerTiempoMaximo(solucionFinal);
 
         if (tiempoMaximoSolucionFinal > tiempoMaximoSolucionActual) {
-            this.solucionFinal = new HashMap<>(solucionActual);
+                this.solucionFinal.clear();
+                this.solucionFinal.putAll(solucionActual);  
         }
-
     }
 
     private int obtenerTiempoMaximo(HashMap<String, ArrayList<Tarea>> solucion) {
@@ -146,9 +171,10 @@ public class Backtracking {
     }
 
     public void imprimirSolucion(int metrica) {
-        System.out.println("Metrica de solucion: "+metrica);
+        System.out.println("Metrica de solucion: "+ metrica);
 
         Integer tiempoMaximoEjecucion = 0;
+
         for (ArrayList<Tarea> tareas : this.solucionFinal.values()) {
 
             Integer nuevoTiempo = this.getTiempoMaximoEjecucion(tareas);
@@ -158,6 +184,7 @@ public class Backtracking {
             }
 
         }
+
         System.out.println("tiempo máximo de ejecución: " + tiempoMaximoEjecucion);
 
 
@@ -167,13 +194,18 @@ public class Backtracking {
             this.solucionFinal.get(key);
             //tareas
             for (Tarea tarea : this.solucionFinal.get(key)) {
-                System.out.println("Tarea: "+tarea.getNombre());
+                 System.out.println("Tarea: "+tarea.getNombre());
             }
         }
     }
 
   public int getTiempoMaximoEjecucion(ArrayList<Tarea> tareas){
-    return tareasAsignadas;
+        int tiempoEjecucion = 0;
+
+        for (Tarea tarea : tareas) {
+             tiempoEjecucion += tarea.getTiempoEjecucion();
+        }
+        return tiempoEjecucion;
   }
         
 }

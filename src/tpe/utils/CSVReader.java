@@ -1,13 +1,11 @@
 package tpe.utils;
 
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import tpe.Procesador;
 import tpe.Tarea;
 
@@ -18,7 +16,7 @@ public class CSVReader {
 
 	}
 
-	public void readTasks(String taskPath, ArrayList<Tarea> tareasCriticas, ArrayList<Tarea> tareasNoCriticas, HashMap<String, Tarea> hashTareas) {
+	public void readTasks(String taskPath, ArrayList<Tarea> tareas, ArrayList<Tarea> tareasCriticas, ArrayList<Tarea> tareasNoCriticas, HashMap<String, Tarea> hashTareas) {
 		// Obtengo una lista con las lineas del archivo
 		// lines.get(0) tiene la primer linea del archivo
 		// lines.get(1) tiene la segunda linea del archivo... y así
@@ -40,13 +38,13 @@ public class CSVReader {
 			else{
 				tareasNoCriticas.add(newTarea);
 			}
-			
+			tareas.add(newTarea);
 			hashTareas.put(id, newTarea);
 		}
 		
 	}
 	
-public void readProcessors(String processorPath) {
+public void readProcessors(String processorPath, ArrayList<Procesador> procesadores) {
 		// Obtengo una lista con las lineas del archivo
 		// lines.get(0) tiene la primer linea del archivo
 		// lines.get(1) tiene la segunda linea del archivo... y así
@@ -61,6 +59,7 @@ public void readProcessors(String processorPath) {
 
 			// Aca instanciar lo que necesiten en base a los datos leidos
 			Procesador newProcesador = new Procesador(id, codigo, refrigerado, anio);
+			procesadores.add(newProcesador);
 			
 		}
 		

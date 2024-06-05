@@ -14,7 +14,6 @@ public class Servicios {
 	ArrayList<Tarea> tareasCriticas;
 	ArrayList<Tarea> tareasNoCriticas;
 	HashMap <String, Tarea> hashAux;
-	ArrayList<HashMap<Procesador, Tarea>> procesadorTarea;
 
 	/*
      * Expresar la complejidad temporal del constructor.
@@ -22,11 +21,9 @@ public class Servicios {
 	public Servicios(String pathProcesadores, String pathTareas){
 		this.tareasCriticas = new ArrayList<>();
 		this.tareasNoCriticas = new ArrayList<>();
-		this.procesadorTarea = new ArrayList<>();
 		this.hashAux = new HashMap<>();
 		CSVReader reader = new CSVReader();
-		reader.readProcessors(pathProcesadores);
-		reader.readTasks(pathTareas, tareasCriticas, tareasNoCriticas, hashAux);
+		reader.readTasks(pathTareas, null, tareasCriticas, tareasNoCriticas, hashAux);
 	}
 	
 	/*
