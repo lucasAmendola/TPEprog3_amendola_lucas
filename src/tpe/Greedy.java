@@ -2,47 +2,72 @@ package tpe;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
+
+import tpe.utils.CSVReader;
 
 public class Greedy {
 
-    private List<Tarea> tareas;
-    private List<Procesador> procesadores;
+    private ArrayList<Tarea> tareas;
+    private ArrayList<Procesador> procesadores;
     private HashMap<String, ArrayList<Tarea>> solucionFinal;
     private HashMap<String, Integer> hashTiempo;
     private HashMap<String, ArrayList<Tarea>> hashCriticas;
     private HashMap<Tarea, Boolean> hashTareasAsignadas;
+    private int metrica;
 
-    public Greedy(ArrayList<Tarea> tareas, ArrayList<Procesador> procesadores) {
-        this.tareas = tareas;
-        this.procesadores = procesadores;
+    public Greedy(String pathTareas, String pathProcesadores) {
+        this.procesadores = new ArrayList<>();
+        this.tareas = new ArrayList<>();
+        this.metrica = 0;
         this.solucionFinal = new HashMap<String, ArrayList<Tarea>>();
         this.hashTiempo = new HashMap<String, Integer>();
         this.hashCriticas = new HashMap<String, ArrayList<Tarea>>();
         this.hashTareasAsignadas = new HashMap<Tarea, Boolean>();
 
+        CSVReader reader = new CSVReader();
+		reader.readProcessors(pathProcesadores, procesadores);
+        reader.readTasks(pathTareas, tareas, new ArrayList<>(), new ArrayList<>(), new HashMap<>());
+
         for (Procesador procesador : procesadores) {
             hashTiempo.put(procesador.getId(), 0);
             hashCriticas.put(procesador.getId(), new ArrayList<>());
-        
-            ArrayList<Tarea> arrayListTareas = new ArrayList<>();
-            solucionFinal.put(procesador.getId(), arrayListTareas);
         }
     }
 
-    public Boolean encontrarSolucion(int tiempoMaximo){
+    public void buscarSolucion(int tiempoMaximo){
+        if (encontrarSolucion(tiempoMaximo)) {
+            System.out.println(solucionFinal);
+            this.imprimirSolucion(metrica);
+        }
+        else{
+            this.imprimirSolucion(tiempoMaximo);
+            System.out.println("\n");
+            System.out.println("Tareas que no pudieron asignarse");
+            for (Map.Entry<Tarea, Boolean> entry : hashTareasAsignadas.entrySet()) {
+                if (!this.hashTareasAsignadas.get(entry.getKey())) {
+                    System.out.println(entry);
+                }
+            }
+        }
+    }
+
+    private Boolean encontrarSolucion(int tiempoMaximo){
 
         for (Tarea tarea : tareas) {
             hashTareasAsignadas.put(tarea, false);
         }
 
         for (Tarea tarea : tareas) {
+                metrica++;
                 String idMejorProcesadorPosible = getMejorProcesadoPosible(tarea, tiempoMaximo);
-                this.solucionFinal.get(idMejorProcesadorPosible).add(tarea);
+                if(idMejorProcesadorPosible != null){
+                    solucionFinal.computeIfAbsent(idMejorProcesadorPosible, k -> new ArrayList<>()).add(tarea);
+                }
         }
 
-        for (Tarea tarea : hashTareasAsignadas.keySet()) {
-                if (!hashTareasAsignadas.get(tarea)) {
+        for (Boolean asignada : hashTareasAsignadas.values()) {
+                if (!asignada) {
                     return false;
                 }
         }
@@ -50,7 +75,7 @@ public class Greedy {
     }
 
     private String getMejorProcesadoPosible(Tarea tarea, int tiempoMaximo) {
-        String idMejorProcesador = "";
+        String idMejorProcesador = null;
 
         for (Procesador procesador : procesadores) {
 
@@ -60,23 +85,51 @@ public class Greedy {
                 int sumaNueva = sumaParcial + tarea.getTiempoEjecucion();
 
                 // Poda para procesadores no refrigerados
-                if ((!procesador.getEstaRefrigerado() && sumaNueva < tiempoMaximo) || procesador.getEstaRefrigerado()) {
-                        this.hashTiempo.put(procesador.getId(), sumaNueva);
-
-                        // Si es crítica la agrego al hash auxiliar de tareas críticas    
-                        if (tarea.getEsCritica()) {
-                            this.hashCriticas.get(procesador.getId()).add(tarea);
-                        }
-
-                        if(idMejorProcesador.isEmpty()){
-                            idMejorProcesador = procesador.getId();
-                        }
-                        else if((this.hashTiempo.get(procesador.getId()) < this.hashTiempo.get(idMejorProcesador))){
-                            idMejorProcesador = procesador.getId();
-                        }
-                } 
+                if ((!procesador.getEstaRefrigerado() && sumaNueva <= tiempoMaximo) || procesador.getEstaRefrigerado()) {
+                    if (idMejorProcesador == null || sumaNueva < this.hashTiempo.get(idMejorProcesador)) {
+                        idMejorProcesador = procesador.getId();
+                    }
+                }
             }
         }
+    
+        if (idMejorProcesador != null) {
+            int sumaNueva = hashTiempo.get(idMejorProcesador) + tarea.getTiempoEjecucion();
+            hashTiempo.put(idMejorProcesador, sumaNueva);
+            if (tarea.getEsCritica()) {
+                this.hashCriticas.get(idMejorProcesador).add(tarea);
+            }
+            this.hashTareasAsignadas.put(tarea, true);
+        }
+    
         return idMejorProcesador;
+}
+    
+    public void imprimirSolucion(int metrica) {
+        
+        System.out.println("Solución Final:");
+        for (Map.Entry<String, ArrayList<Tarea>> entry : solucionFinal.entrySet()) {
+            System.out.println("Procesador: " + entry.getKey());
+            for (Tarea tarea : entry.getValue()) {
+                System.out.println("  Tarea: " + tarea.getNombre() + " Tiempo: " + tarea.getTiempoEjecucion());
+            }
+        }
+        System.out.println("Metrica de solucion: " + metrica);
+
+        int tiempoMaximoEjecucion = 0;
+        for (ArrayList<Tarea> tareas : solucionFinal.values()) {
+            int nuevoTiempo = this.obtenerTiempoTotalDeEjecucion(tareas);
+            tiempoMaximoEjecucion = Math.max(tiempoMaximoEjecucion, nuevoTiempo);
+        }
+        System.out.println("Tiempo máximo de ejecución: " + tiempoMaximoEjecucion);
     }
+
+  private int obtenerTiempoTotalDeEjecucion(ArrayList<Tarea> tareas){
+        int tiempoEjecucion = 0;
+
+        for (Tarea tarea : tareas) {
+             tiempoEjecucion += tarea.getTiempoEjecucion();
+        }
+        return tiempoEjecucion;
+  }
 }
