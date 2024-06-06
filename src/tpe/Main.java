@@ -40,6 +40,7 @@ public class Main {
         //----------------------Inicio prueba de servicios de la parte 2--------------------//
 
         Backtracking backtracking = new Backtracking(pathTareas, pathProcesadores);
-        backtracking.encontrarSolucion(40);
+        backtracking.encontrarSolucion(50);
+        
     }
 }
