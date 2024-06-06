@@ -39,10 +39,13 @@ public class Main {
 
         //----------------------Inicio prueba de servicios de la parte 2--------------------//
 
+        Greedy greedy = new Greedy(pathTareas, pathProcesadores);
+        greedy.buscarSolucion(100);
+
+        System.out.println("\n");
+
         Backtracking backtracking = new Backtracking(pathTareas, pathProcesadores);
         backtracking.encontrarSolucion(100);
         
-        Greedy greedy = new Greedy(pathTareas, pathProcesadores);
-        greedy.buscarSolucion(100);
     }
 }

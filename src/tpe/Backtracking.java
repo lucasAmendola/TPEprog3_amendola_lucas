@@ -106,8 +106,9 @@ public class Backtracking {
                             solucionActual.get(procesador.getId()).add(tarea);
                             
                             // Llamo a recursividad
-                            
                             this.encontrarSolucion(solucionActual, tiempoMaximo, indiceTareas+1);
+
+                            solucionActual.get(procesador.getId()).remove(tarea);
 
                             // Termino recursividad y vuelvo al estado anterior
                             
@@ -117,9 +118,7 @@ public class Backtracking {
                             if(tarea.getEsCritica()){
                                 this.hashCriticas.get(procesador.getId()).remove(tarea);
                             }
-                            
-                            // Saco tarea de procesador
-                            solucionActual.get(procesador.getId()).remove(tarea);
+                        
                     }   
                 } 
             } 
@@ -130,10 +129,9 @@ public class Backtracking {
     private void quedarseConLaMejorSolucion(HashMap<String, ArrayList<Tarea>> solucionActual) {
         
         int tiempoMaximoSolucionActual = obtenerTiempoMaximoDeEjecucion(solucionActual);
-        int tiempoMaximoSolucionFinal = obtenerTiempoMaximoDeEjecucion(solucionFinal);
+        int tiempoMaximoSolucionFinal = obtenerTiempoMaximoDeEjecucion(this.solucionFinal);
 
-        if (tiempoMaximoSolucionFinal > tiempoMaximoSolucionActual) {
-            solucionFinal.clear();
+        if (tiempoMaximoSolucionFinal < tiempoMaximoSolucionActual) {
             solucionFinal.putAll(solucionActual);
             for (String keyProcesador : this.solucionFinal.keySet()) {
                 this.solucionFinal.get(keyProcesador).addAll(solucionActual.get(keyProcesador));
@@ -146,24 +144,18 @@ public class Backtracking {
         int tiempoMaximo = 0;
 
         for (ArrayList<Tarea> tareas : solucion.values()) {
-             int nuevoTiempo = 0;
-
-             for (Tarea tarea : tareas) {
-                    nuevoTiempo += tarea.getTiempoEjecucion();
-             }
-           
-            if (tiempoMaximo < nuevoTiempo) {
-                tiempoMaximo = nuevoTiempo;
-            }
+            int tiempoProcesador = obtenerTiempoTotalDeEjecucion(tareas);
+            tiempoMaximo = Math.max(tiempoMaximo, tiempoProcesador);
         }
-       
+    
         return tiempoMaximo;
     }
+       
 
     public void imprimirSolucion(int metrica) {
         
-        System.out.println("Solución Final:");
-        for (Map.Entry<String, ArrayList<Tarea>> entry : solucionFinal.entrySet()) {
+        System.out.println("Solución Final BACKTRACKING:");
+        for (Map.Entry<String, ArrayList<Tarea>> entry : this.solucionFinal.entrySet()) {
             System.out.println("Procesador: " + entry.getKey());
             for (Tarea tarea : entry.getValue()) {
                 System.out.println("  Tarea: " + tarea.getNombre() + " Tiempo: " + tarea.getTiempoEjecucion());
@@ -172,7 +164,7 @@ public class Backtracking {
         System.out.println("Metrica de solucion: " + metrica);
 
         int tiempoMaximoEjecucion = 0;
-        for (ArrayList<Tarea> tareas : solucionFinal.values()) {
+        for (ArrayList<Tarea> tareas : this.solucionFinal.values()) {
             int nuevoTiempo = this.obtenerTiempoTotalDeEjecucion(tareas);
             tiempoMaximoEjecucion = Math.max(tiempoMaximoEjecucion, nuevoTiempo);
         }

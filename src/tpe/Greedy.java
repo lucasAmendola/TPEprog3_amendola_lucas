@@ -3,7 +3,6 @@ package tpe;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
 import tpe.utils.CSVReader;
 
 public class Greedy {
@@ -37,7 +36,6 @@ public class Greedy {
 
     public void buscarSolucion(int tiempoMaximo){
         if (encontrarSolucion(tiempoMaximo)) {
-            System.out.println(solucionFinal);
             this.imprimirSolucion(metrica);
         }
         else{
@@ -107,7 +105,7 @@ public class Greedy {
     
     public void imprimirSolucion(int metrica) {
         
-        System.out.println("Solución Final:");
+        System.out.println("Solución Final GREEDY: ");
         for (Map.Entry<String, ArrayList<Tarea>> entry : solucionFinal.entrySet()) {
             System.out.println("Procesador: " + entry.getKey());
             for (Tarea tarea : entry.getValue()) {
@@ -119,7 +117,9 @@ public class Greedy {
         int tiempoMaximoEjecucion = 0;
         for (ArrayList<Tarea> tareas : solucionFinal.values()) {
             int nuevoTiempo = this.obtenerTiempoTotalDeEjecucion(tareas);
-            tiempoMaximoEjecucion = Math.max(tiempoMaximoEjecucion, nuevoTiempo);
+            if(tiempoMaximoEjecucion < nuevoTiempo){
+                tiempoMaximoEjecucion = nuevoTiempo;
+            }
         }
         System.out.println("Tiempo máximo de ejecución: " + tiempoMaximoEjecucion);
     }
