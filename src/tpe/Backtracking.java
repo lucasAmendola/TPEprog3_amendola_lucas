@@ -71,7 +71,9 @@ public class Backtracking {
         y que tambien se comprueba a través de la utilización de un HashMap auxiliar, en donde se va
         alamecenando el tiempo de ejecucion de cada procesador a medida de que se le asignan tareas. Una
         vez superadas las 2 podas, se llega a la instancia de asignacion final de la tarea al procesador 
-        actual y se llama recursivamente a la función para que siga con las demas tareas.>>
+        actual y se llama recursivamente a la función para que siga con las demas tareas. Una vez encontrada
+        una posible solucion, esta se compara con la considerada anteriormente y se decide
+        cual es la mas optima, la cual conservaremos hasta que encontremos una mejor.>>
     */
 
     private void encontrarSolucion(HashMap<String, ArrayList<Tarea>> solucionActual, int tiempoMaximo, int indiceTareas) {
