@@ -23,7 +23,7 @@ public class Servicios {
 		this.tareasNoCriticas = new ArrayList<>();
 		this.hashAux = new HashMap<>();
 		CSVReader reader = new CSVReader();
-		reader.readTasks(pathTareas, null, tareasCriticas, tareasNoCriticas, hashAux);
+		reader.readTasks(pathTareas, new ArrayList<>(), tareasCriticas, tareasNoCriticas, hashAux);
 	}
 	
 	/*

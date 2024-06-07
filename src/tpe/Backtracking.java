@@ -15,12 +15,17 @@ public class Backtracking {
     private int metrica;
 
     public Backtracking(String pathTareas, String pathProcesadores) {
+
+        //data procesadores y tareas
         this.procesadores = new ArrayList<>();
         this.tareas = new ArrayList<>();
+
+        //hashmaps auxiliares
         this.hashTiempo = new HashMap<String, Integer>();
         this.hashCriticas = new HashMap<String, ArrayList<Tarea>>();
+
+        //estructura de solucion final
         this.solucionFinal = new HashMap<String, ArrayList<Tarea>>();
-        this.metrica = 0;
 
         CSVReader reader = new CSVReader();
 		reader.readProcessors(pathProcesadores, procesadores);
@@ -32,17 +37,24 @@ public class Backtracking {
         }
     }
 
-    //FUNCION PUBLICA
+    //FUNCION PUBLICA -> inicia las propiedas necesarias para hallar una solucion
     public void encontrarSolucion(int tiempoMaximo) {
 
         HashMap<String, ArrayList<Tarea>> solucionActual = new HashMap<String, ArrayList<Tarea>>();
 
+        //inicializo procesadores como clave en mi hashmap de solucion actual
         for (Procesador p: procesadores) {
             ArrayList<Tarea> arrayListTareas = new ArrayList<>();
             solucionActual.put(p.getId(), arrayListTareas);
         }
-        //mandar a recursivo
-        this.encontrarSolucion(solucionActual, tiempoMaximo, 0);
+
+        int indiceTareas = 0;
+        this.metrica = 0;
+
+        //inicia backtracking
+        this.encontrarSolucion(solucionActual, tiempoMaximo, indiceTareas);
+
+        //mostrar resultados
         this.imprimirSolucion(metrica);
     }
 
@@ -68,14 +80,18 @@ public class Backtracking {
         // Asigné todas las tareas a algún procesador
         if (indiceTareas == this.tareas.size()) {
             
+            //si mi solucion final esta vacia = primera vez que encuentro una solucion
             if (this.solucionFinal.isEmpty()) {
-                solucionFinal.putAll(solucionActual);
-                for (String keyProcesador : this.solucionFinal.keySet()) {
-                    this.solucionFinal.get(keyProcesador).addAll(solucionActual.get(keyProcesador));
-                }
+                //asigno mi primera solucion encontrada
+                this.asignarNuevaSolucion(solucionActual);
             } 
             else {
-                this.quedarseConLaMejorSolucion(solucionActual);
+                int tiempoActual = obtenerTiempoMaximoDeEjecucion(solucionActual);
+                int tiempoFinal = obtenerTiempoMaximoDeEjecucion(solucionFinal);
+                if(tiempoActual < tiempoFinal){
+                    //asigno nueva solucion final
+                    this.asignarNuevaSolucion(solucionActual);
+                }
             }
         } 
         else {
@@ -125,32 +141,43 @@ public class Backtracking {
         }
     }
 
-
-    private void quedarseConLaMejorSolucion(HashMap<String, ArrayList<Tarea>> solucionActual) {
-        
-        int tiempoMaximoSolucionActual = obtenerTiempoMaximoDeEjecucion(solucionActual);
-        int tiempoMaximoSolucionFinal = obtenerTiempoMaximoDeEjecucion(this.solucionFinal);
-
-        if (tiempoMaximoSolucionFinal < tiempoMaximoSolucionActual) {
-            solucionFinal.putAll(solucionActual);
-            for (String keyProcesador : this.solucionFinal.keySet()) {
-                this.solucionFinal.get(keyProcesador).addAll(solucionActual.get(keyProcesador));
+    private void asignarNuevaSolucion(HashMap<String, ArrayList<Tarea>> solucionActual){
+        this.solucionFinal.clear();
+        //por cada procesador
+        for (String idProcesador : solucionActual.keySet()) {
+            String keyProcessor = idProcesador;
+            ArrayList<Tarea> nuevaListaTareas = new ArrayList<Tarea>(); //new list
+            int iTarea = 0; //index
+            //obtengo su taskList y la recorro
+            while (iTarea < solucionActual.get(idProcesador).size()) {
+                //obtengo tarea
+                Tarea task = solucionActual.get(idProcesador).get(iTarea);
+                //guardo en lista
+                nuevaListaTareas.add(task); //add task
+                iTarea++;
             }
+            //agreo el procesador con sus tareas a la solucion actualizada
+            this.solucionFinal.put(keyProcessor, nuevaListaTareas);
         }
     }
 
+    //obtiene el maximo tiempo de ejecucion de una solucion...
     private int obtenerTiempoMaximoDeEjecucion(HashMap<String, ArrayList<Tarea>> solucion) {
-
+        
+        //debo obtener el maximo tiempo de ejecucion
+        //osea de mi solucion, el procesador que mas tarde (la suma de sus tareas es la mas larga)
+        
         int tiempoMaximo = 0;
-
+        //siempre me quedo con el tiempo mas alto
         for (ArrayList<Tarea> tareas : solucion.values()) {
             int tiempoProcesador = obtenerTiempoTotalDeEjecucion(tareas);
-            tiempoMaximo = Math.max(tiempoMaximo, tiempoProcesador);
+            if (tiempoProcesador > tiempoMaximo) {
+                tiempoMaximo = tiempoProcesador;
+            }
         }
     
         return tiempoMaximo;
     }
-       
 
     public void imprimirSolucion(int metrica) {
         
@@ -171,7 +198,8 @@ public class Backtracking {
         System.out.println("Tiempo máximo de ejecución: " + tiempoMaximoEjecucion);
     }
 
-  private int obtenerTiempoTotalDeEjecucion(ArrayList<Tarea> tareas){
+    //obtiene la suma total de tiempo de una lista de tareas...
+    private int obtenerTiempoTotalDeEjecucion(ArrayList<Tarea> tareas){
         int tiempoEjecucion = 0;
 
         for (Tarea tarea : tareas) {
