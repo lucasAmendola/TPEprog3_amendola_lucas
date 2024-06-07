@@ -7,8 +7,8 @@ public class Main {
 
         //----------------------Inicio Prueba de servicios de la parte 1--------------------//
 
-        String pathTareas = "C:\\Users\\s7\\Desktop\\TPE\\programacion3\\src\\tpe\\datasets\\Tareas.csv";
-        String pathProcesadores = "C:\\Users\\s7\\Desktop\\TPE\\programacion3\\src\\tpe\\datasets\\Procesadores.csv";
+        String pathTareas = "src\\tpe\\datasets\\Tareas.csv";
+        String pathProcesadores = "src\\tpe\\datasets\\Procesadores.csv";
 
        Servicios s1 = new Servicios(pathProcesadores, pathTareas);
 
