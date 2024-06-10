@@ -36,7 +36,9 @@ public class Servicios {
 	}
     
     /*
-     * Complejidad Temporal: O(n) en el peor de los casos, ya que podría iterar sobre todas las tareas.
+     * Complejidad Temporal: O(n).
+	 * El método addAll tiene una complejidad temporal de
+	 * O(n) donde n, es el número de elementos que se añaden.
      */
 
 	/*Permitir que el usuario decida si quiere ver todas las tareas críticas o no críticas y generar
