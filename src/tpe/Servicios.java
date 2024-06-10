@@ -17,6 +17,8 @@ public class Servicios {
 
 	/*
      * Expresar la complejidad temporal del constructor.
+	 * la complejidad temporal sería O(n) debido a que tiene que iterar o copiar 
+	 * n elementos para inicializar las estructuras de datos.
      */
 	public Servicios(String pathProcesadores, String pathTareas){
 		this.tareasCriticas = new ArrayList<>();
